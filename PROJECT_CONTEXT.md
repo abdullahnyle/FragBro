@@ -1,23 +1,24 @@
-git remote -v# Cologne — Project Context
+# FragBro — Project Context
 
 ## What I'm building
-A fragrance tracking and recommendation app. Warm-up phase: personal collection tracker. Later phases: ML recommender, NLP-based scent similarity.
+FragBro — a fragrance recommendation PWA (Progressive Web App). Mobile-first, shareable via link, no app store friction. Questionnaire-based recommendations in v1, evolving to embedding-based natural language search. Feature set includes blind-buy scoring, personal collection tracking, wear logs, wishlist, and later: influencer collections and community features.
 
 ## Current phase
-Phase 1: Warm-up project planning
+Phase 1: Warm-up project planning — designing the data model
 
 ## This week's goal
-Design the fragrance tracker data model. Write first Python script.
+Finalize FragBro data model. Write first Python script to create SQLite database and log first fragrance.
 
 ## Last session
-Completed full environment setup. Pushed first commit to GitHub.
+Renamed repo from cologne to fragbro. Confirmed rename end-to-end. Drafted v1 data model with 5 tables: fragrances, users, collection, wear_logs, wishlist.
 
 ## Next step
-Plan data model — what fields to store per fragrance. Build CLI tracker in Python.
+Review data model against real fragrances from my collection. Refine fields. Then build first Python script.
 
 ## Key decisions
-- Python as primary language
+- Product name: FragBro (capital F, capital B, everywhere)
+- Delivery: mobile-first PWA (not native app, not desktop website)
+- Language: Python primary, JavaScript secondary
+- Database: SQLite for Phase 1, PostgreSQL for Phase 2+
+- Repo: github.com/abdullahnyle/fragbro
 - Workflow: Claude for planning, Codex for coding, Gemini for research
-- Folder name: Cologne (spine project)
-- GitHub: abdullahnyle/cologne
-Repo renamed to FragBro
