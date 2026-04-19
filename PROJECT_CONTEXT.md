@@ -1,4 +1,4 @@
-# Cologne — Project Context
+git remote -v# Cologne — Project Context
 
 ## What I'm building
 A fragrance tracking and recommendation app. Warm-up phase: personal collection tracker. Later phases: ML recommender, NLP-based scent similarity.
@@ -20,3 +20,4 @@ Plan data model — what fields to store per fragrance. Build CLI tracker in Pyt
 - Workflow: Claude for planning, Codex for coding, Gemini for research
 - Folder name: Cologne (spine project)
 - GitHub: abdullahnyle/cologne
+Repo renamed to FragBro
