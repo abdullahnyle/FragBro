@@ -115,15 +115,17 @@ Links fragrances to their DNA families. A fragrance can belong to multiple famil
 | `dna_family_id` | integer | yes | 1 | |
 
 ## Relationships diagram
-users ──(owns)──> collection <──(is owned)── fragrances
-│                                                │
-├──(wears)──> wear_logs <──(is worn)────────────┤
-│                                                │
-├──(wants)──> wishlist <──(is wanted)───────────┤
-│                                                │
-│                                                ├──(belongs to)──> fragrance_dna ──(contains)──> dna_families
-│                                                │
-│                                                └──(clones)──> fragrances (self-link via dupe_of_id)
+
+The seven tables connect through five core relationships:
+
+- **users → collection → fragrances**: a user owns fragrances (a row in `collection` is one user owning one fragrance)
+- **users → wear_logs → fragrances**: a user wears a fragrance on a given date (one row per wearing event)
+- **users → wishlist → fragrances**: a user wants to buy a fragrance
+- **fragrances → fragrance_dna → dna_families**: a fragrance belongs to one or more DNA families (many-to-many)
+- **fragrances → fragrances**: a fragrance can be a dupe of another fragrance (self-link via `dupe_of_id`)
+
+In one sentence: every relationship between a user and a fragrance flows through a middle table (`collection`, `wear_logs`, or `wishlist`), and fragrances themselves are categorized by DNA family and optionally linked to the original they clone.
+
 ## Decisions explicitly NOT made yet
 
 - **Vibe tags system** — to be detailed in a separate spec when we hit it
