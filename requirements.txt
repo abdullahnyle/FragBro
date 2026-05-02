@@ -1,0 +1,2 @@
+# FragBro Python dependencies
+# Add packages as we install them, format: package==version
