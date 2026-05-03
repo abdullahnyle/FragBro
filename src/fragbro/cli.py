@@ -11,7 +11,7 @@ Usage:
 """
 
 import typer
-
+from datetime import date as date_type
 from fragbro.database import get_connection, initialize_database
 from fragbro.seed import seed_all
 from fragbro.seed_personal import seed_personal
@@ -164,6 +164,126 @@ def stats() -> None:
         typer.echo(f"  {key:.<24} {value}")
     typer.echo("")
 
+@app.command()
+def wear(
+    name: str = typer.Argument(..., help="Fragrance name to log a wear for."),
+    date: str = typer.Option(
+        None,
+        "--date",
+        "-d",
+        help="Wear date in YYYY-MM-DD format. Defaults to today.",
+    ),
+    occasion: str = typer.Option(
+        None, "--occasion", "-o", help="Occasion (e.g. 'uni', 'date night')."
+    ),
+    weather: str = typer.Option(
+        None, "--weather", "-w", help="Weather (e.g. 'warm and humid')."
+    ),
+    rating: float = typer.Option(
+        None, "--rating", "-r", help="Performance rating 0-10 for the day."
+    ),
+    mood: str = typer.Option(
+        None, "--mood", "-m", help="Mood when wearing it."
+    ),
+) -> None:
+    """Log a wear of a fragrance."""
+    connection = get_connection()
 
+    # Resolve the user (just one user for now — yourself)
+    user_row = connection.execute("SELECT id FROM users LIMIT 1").fetchone()
+    if user_row is None:
+        typer.echo("No user found. Run `fragbro seed-personal` first.")
+        connection.close()
+        raise typer.Exit(code=1)
+    user_id = user_row[0]
+
+    # Resolve the fragrance by name (case-insensitive)
+    frag_row = connection.execute(
+        "SELECT id, name, brand FROM fragrances WHERE LOWER(name) = LOWER(?)",
+        (name,),
+    ).fetchone()
+    if frag_row is None:
+        typer.echo(f"No fragrance found matching '{name}'.")
+        connection.close()
+        raise typer.Exit(code=1)
+    frag_id, frag_name, frag_brand = frag_row
+
+    # Default to today if no date passed
+    wear_date = date if date is not None else date_type.today().isoformat()
+
+    connection.execute(
+        """
+        INSERT INTO wear_logs
+            (user_id, fragrance_id, wear_date, occasion, weather, performance_rating, mood)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (user_id, frag_id, wear_date, occasion, weather, rating, mood),
+    )
+    connection.commit()
+    connection.close()
+
+    typer.echo(f"Logged: {frag_brand} — {frag_name} on {wear_date}")
+
+
+@app.command()
+def collection() -> None:
+    """Show your fragrance collection with ratings."""
+    connection = get_connection()
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name, c.bottle_size_ml, c.purchase_date,
+               c.personal_rating, c.unworn_reason
+        FROM collection c
+        JOIN fragrances f ON c.fragrance_id = f.id
+        ORDER BY c.personal_rating DESC NULLS LAST, f.brand, f.name
+        """
+    ).fetchall()
+    connection.close()
+
+    if not rows:
+        typer.echo("Your collection is empty. Run `fragbro seed-personal` to populate it.")
+        return
+
+    typer.echo(f"\nYour collection — {len(rows)} fragrance(s):\n")
+    for row in rows:
+        brand, name, size, purchase, rating, unworn_reason = row
+        size_str = f"{size}ml" if size else "?ml"
+        rating_str = f"{rating}/10" if rating is not None else "unrated"
+        line = f"  {rating_str:>10}   {brand} — {name}  ({size_str})"
+        typer.echo(line)
+        if unworn_reason:
+            typer.echo(f"               note: {unworn_reason}")
+    typer.echo("")
+
+
+@app.command()
+def wishlist() -> None:
+    """Show your wishlist with notes."""
+    connection = get_connection()
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name, w.added_date, w.notes,
+               original.brand AS dupe_of_brand, original.name AS dupe_of_name
+        FROM wishlist w
+        JOIN fragrances f ON w.fragrance_id = f.id
+        LEFT JOIN fragrances original ON f.dupe_of_id = original.id
+        ORDER BY w.added_date DESC
+        """
+    ).fetchall()
+    connection.close()
+
+    if not rows:
+        typer.echo("Your wishlist is empty.")
+        return
+
+    typer.echo(f"\nYour wishlist — {len(rows)} fragrance(s):\n")
+    for row in rows:
+        brand, name, added, notes, dupe_brand, dupe_name = row
+        typer.echo(f"  {brand} — {name}   (added {added})")
+        if dupe_name:
+            typer.echo(f"      dupe of: {dupe_brand} {dupe_name}")
+        if notes:
+            typer.echo(f"      note: {notes}")
+    typer.echo("")
 if __name__ == "__main__":
     app()
