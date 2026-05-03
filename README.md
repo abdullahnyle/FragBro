@@ -63,7 +63,30 @@ The data model and core schema are designed to survive across phases — Phase 1
 The stack is intentionally chosen to be production-realistic but achievable for a solo builder.
 
 ---
+## Quickstart
 
+```bash
+# Clone the repo
+git clone https://github.com/abdullahnyle/fragbro.git
+cd fragbro
+
+# Set up virtual environment
+python -m venv venv
+.\venv\Scripts\Activate.ps1  # Windows
+# source venv/bin/activate    # Mac/Linux
+
+# Install dependencies
+pip install -e .
+
+# Initialize and seed the database
+fragbro init
+fragbro seed
+
+# Try it
+fragbro list
+fragbro show Khamrah
+fragbro stats
+```
 ## Documentation
 
 Project documentation lives in the [`/docs`](./docs) folder.
