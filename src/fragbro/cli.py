@@ -14,6 +14,7 @@ import typer
 
 from fragbro.database import get_connection, initialize_database
 from fragbro.seed import seed_all
+from fragbro.seed_personal import seed_personal
 
 
 app = typer.Typer(
@@ -33,6 +34,11 @@ def init() -> None:
 def seed() -> None:
     """Seed the database with the initial set of fragrances."""
     seed_all()
+    
+@app.command(name="seed-personal")
+def seed_personal_cmd() -> None:
+    """Seed the database with the project owner's personal data."""
+    seed_personal()
 
 
 @app.command(name="list")

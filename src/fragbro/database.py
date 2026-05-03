@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS collection (
     fragrance_id INTEGER NOT NULL,
     bottle_size_ml INTEGER,
     purchase_date TEXT,
-    personal_rating INTEGER,
+    personal_rating REAL,
     unworn_reason TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (fragrance_id) REFERENCES fragrances(id)
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS wear_logs (
     wear_date TEXT NOT NULL,
     occasion TEXT,
     weather TEXT,
-    performance_rating INTEGER,
+    performance_rating REAL,
     mood TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (fragrance_id) REFERENCES fragrances(id)
