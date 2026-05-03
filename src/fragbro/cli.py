@@ -282,8 +282,105 @@ def wishlist() -> None:
         typer.echo(f"  {brand} — {name}   (added {added})")
         if dupe_name:
             typer.echo(f"      dupe of: {dupe_brand} {dupe_name}")
-        if notes:
-            typer.echo(f"      note: {notes}")
+    if notes:
+        typer.echo(f"      note: {notes}")
     typer.echo("")
+
+
+@app.command(name="wear-stats")
+def wear_stats() -> None:
+    """Show analytics about your wearing patterns."""
+    connection = get_connection()
+
+    typer.echo("\n=== Wear Stats ===\n")
+
+    # --- Total wears ---
+    total = connection.execute("SELECT COUNT(*) FROM wear_logs").fetchone()[0]
+    typer.echo(f"Total wears logged: {total}")
+
+    if total == 0:
+        typer.echo("\nNo wears logged yet. Use `fragbro wear <name>` to log your first.")
+        connection.close()
+        return
+
+    # --- Most worn, all-time ---
+    typer.echo("\n--- Most worn (all time) ---")
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name, COUNT(w.id) AS wear_count
+        FROM wear_logs w
+        JOIN fragrances f ON w.fragrance_id = f.id
+        GROUP BY f.id
+        ORDER BY wear_count DESC, f.name ASC
+        LIMIT 5
+        """
+    ).fetchall()
+    for brand, name, count in rows:
+        typer.echo(f"  {count:>3}x   {brand} — {name}")
+
+    # --- Most worn, last 30 days ---
+    typer.echo("\n--- Most worn (last 30 days) ---")
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name, COUNT(w.id) AS wear_count
+        FROM wear_logs w
+        JOIN fragrances f ON w.fragrance_id = f.id
+        WHERE w.wear_date >= date('now', '-30 days')
+        GROUP BY f.id
+        ORDER BY wear_count DESC, f.name ASC
+        LIMIT 5
+        """
+    ).fetchall()
+    if rows:
+        for brand, name, count in rows:
+            typer.echo(f"  {count:>3}x   {brand} — {name}")
+    else:
+        typer.echo("  (no wears in the last 30 days)")
+
+    # --- Owned but never worn ---
+    typer.echo("\n--- Owned but never worn ---")
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name
+        FROM collection c
+        JOIN fragrances f ON c.fragrance_id = f.id
+        WHERE NOT EXISTS (
+            SELECT 1 FROM wear_logs w
+            WHERE w.fragrance_id = c.fragrance_id
+              AND w.user_id = c.user_id
+        )
+        ORDER BY f.brand, f.name
+        """
+    ).fetchall()
+    if rows:
+        for brand, name in rows:
+            typer.echo(f"  {brand} — {name}")
+    else:
+        typer.echo("  (none — you've worn everything you own at least once)")
+
+    # --- Days since last worn (per owned fragrance) ---
+    typer.echo("\n--- Days since last worn (longest first) ---")
+    rows = connection.execute(
+        """
+        SELECT f.brand, f.name,
+               MAX(w.wear_date) AS last_worn,
+               CAST(julianday('now') - julianday(MAX(w.wear_date)) AS INTEGER) AS days_ago
+        FROM collection c
+        JOIN fragrances f ON c.fragrance_id = f.id
+        LEFT JOIN wear_logs w ON w.fragrance_id = c.fragrance_id
+                              AND w.user_id = c.user_id
+        GROUP BY f.id
+        HAVING last_worn IS NOT NULL
+        ORDER BY days_ago DESC
+        """
+    ).fetchall()
+    if rows:
+        for brand, name, last_worn, days_ago in rows:
+            typer.echo(f"  {days_ago:>4} days ago    {brand} — {name}    (last: {last_worn})")
+    else:
+        typer.echo("  (no wear data yet)")
+
+    typer.echo("")
+    connection.close()
 if __name__ == "__main__":
     app()

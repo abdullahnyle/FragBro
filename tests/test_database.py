@@ -139,3 +139,48 @@ def test_user_email_must_be_unique(tmp_db):
             ("user2", "shared@example.com"),
         )
         tmp_db.commit()
+
+
+def test_count_wears_per_fragrance(tmp_db):
+    """We can count wears grouped by fragrance — basic analytics test."""
+    # Insert two fragrances
+    cursor1 = tmp_db.execute(
+        "INSERT INTO fragrances (name, brand) VALUES (?, ?)", ("A", "Brand X")
+    )
+    frag_a = cursor1.lastrowid
+    cursor2 = tmp_db.execute(
+        "INSERT INTO fragrances (name, brand) VALUES (?, ?)", ("B", "Brand Y")
+    )
+    frag_b = cursor2.lastrowid
+
+    # Insert a user
+    cursor3 = tmp_db.execute(
+        "INSERT INTO users (username, email) VALUES (?, ?)",
+        ("testuser", "test@example.com"),
+    )
+    user_id = cursor3.lastrowid
+
+    # Insert 3 wears for A, 1 wear for B
+    for _ in range(3):
+        tmp_db.execute(
+            "INSERT INTO wear_logs (user_id, fragrance_id, wear_date) VALUES (?, ?, ?)",
+            (user_id, frag_a, "2026-05-01"),
+        )
+    tmp_db.execute(
+        "INSERT INTO wear_logs (user_id, fragrance_id, wear_date) VALUES (?, ?, ?)",
+        (user_id, frag_b, "2026-05-01"),
+    )
+    tmp_db.commit()
+
+    # Group and count
+    rows = tmp_db.execute(
+        """
+        SELECT f.name, COUNT(w.id) AS wear_count
+        FROM wear_logs w
+        JOIN fragrances f ON w.fragrance_id = f.id
+        GROUP BY f.id
+        ORDER BY wear_count DESC
+        """
+    ).fetchall()
+
+    assert rows == [("A", 3), ("B", 1)]
