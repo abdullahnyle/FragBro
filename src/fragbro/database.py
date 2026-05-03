@@ -122,32 +122,42 @@ ALL_CREATE_STATEMENTS = [
 ]
 
 
-def get_connection() -> sqlite3.Connection:
+def get_connection(db_path: Path | None = None) -> sqlite3.Connection:
     """
     Open a connection to the FragBro database.
 
-    Creates the data/ folder if it doesn't exist, then connects to
-    fragbro.db (creating the file if it doesn't exist).
+    If db_path is provided, connects to that path instead of the default.
+    Useful for tests, which need their own throwaway database.
+
+    Creates parent folders if needed and enables foreign key enforcement.
     """
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(DB_PATH)
-    # Enable foreign key enforcement. SQLite has it OFF by default for legacy reasons.
+    target = db_path if db_path is not None else DB_PATH
+    target.parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(target)
     connection.execute("PRAGMA foreign_keys = ON;")
     return connection
 
-
-def initialize_database() -> None:
+def initialize_database(db_path: Path | None = None) -> None:
     """
     Create all tables defined in the Phase 1 data model.
 
+    If db_path is provided, initializes that database instead of the default.
     Safe to run multiple times — each CREATE TABLE uses IF NOT EXISTS,
     so existing tables are left untouched.
     """
-    print(f"Initializing database at: {DB_PATH}")
+    target = db_path if db_path is not None else DB_PATH
+    print(f"Initializing database at: {target}")
 
-    connection = get_connection()
+    connection = get_connection(db_path=target)
     cursor = connection.cursor()
 
+    for statement in ALL_CREATE_STATEMENTS:
+        cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+
+    print(f"Database ready. {len(ALL_CREATE_STATEMENTS)} tables created or verified.")
     for statement in ALL_CREATE_STATEMENTS:
         cursor.execute(statement)
 
