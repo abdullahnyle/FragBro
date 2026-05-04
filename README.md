@@ -87,6 +87,21 @@ fragbro list
 fragbro show Khamrah
 fragbro stats
 ```
+## Running the API
+
+FragBro also exposes an HTTP API for programmatic access (and for the upcoming web frontend).
+
+```bash
+uvicorn fragbro.api:app --reload
+```
+
+Then open:
+- `http://localhost:8000/docs` — interactive API documentation
+- `http://localhost:8000/fragrances` — list all fragrances as JSON
+- `http://localhost:8000/wear-stats` — wearing analytics
+
+The API and CLI share the same database — you can log a wear via the CLI and see it instantly via `/wear-stats`.
+
 ## Documentation
 
 Project documentation lives in the [`/docs`](./docs) folder.
