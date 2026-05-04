@@ -218,9 +218,13 @@ def link_fragrance_dna(connection) -> None:
     print(f"Linked {link_count} fragrance/DNA pair(s).")
 
 
-def seed_all() -> None:
-    """Run all seed steps in order."""
-    connection = get_connection()
+def seed_all(db_path=None) -> None:
+    """Run all seed steps in order.
+
+    If db_path is provided, seeds that database instead of the default.
+    Useful for tests.
+    """
+    connection = get_connection(db_path=db_path)
 
     insert_dna_families(connection)
     insert_fragrances(connection)
