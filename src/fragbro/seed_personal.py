@@ -268,9 +268,13 @@ def insert_wishlist(connection, user_id: int) -> None:
     print(f"Added {inserted} wishlist entry/entries.")
 
 
-def seed_personal() -> None:
-    """Run all personal seed steps."""
-    connection = get_connection()
+def seed_personal(db_path=None) -> None:
+    """Run all personal seed steps.
+
+    If db_path is provided, seeds that database instead of the default.
+    Useful for tests.
+    """
+    connection = get_connection(db_path=db_path)
 
     # Catalog must exist before we can reference fragrances by id
     insert_extra_catalog(connection)

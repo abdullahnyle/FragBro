@@ -137,6 +137,7 @@ def get_connection(db_path: Path | None = None) -> sqlite3.Connection:
     connection.execute("PRAGMA foreign_keys = ON;")
     return connection
 
+
 def initialize_database(db_path: Path | None = None) -> None:
     """
     Create all tables defined in the Phase 1 data model.
@@ -151,13 +152,6 @@ def initialize_database(db_path: Path | None = None) -> None:
     connection = get_connection(db_path=target)
     cursor = connection.cursor()
 
-    for statement in ALL_CREATE_STATEMENTS:
-        cursor.execute(statement)
-
-    connection.commit()
-    connection.close()
-
-    print(f"Database ready. {len(ALL_CREATE_STATEMENTS)} tables created or verified.")
     for statement in ALL_CREATE_STATEMENTS:
         cursor.execute(statement)
 

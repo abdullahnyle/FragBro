@@ -32,3 +32,20 @@ def tmp_db(tmp_path: Path):
     yield connection
 
     connection.close()
+
+
+@pytest.fixture
+def tmp_db_path(tmp_path: Path):
+    """
+    Create a fresh test database, set up the schema, and yield its file path.
+
+    Used by tests that need to call functions which open their own connection
+    (like seed_all and seed_personal) instead of receiving a connection.
+    """
+    db_file = tmp_path / "test_fragbro.db"
+    connection = get_connection(db_path=db_file)
+    for statement in ALL_CREATE_STATEMENTS:
+        connection.execute(statement)
+    connection.commit()
+    connection.close()  # close so seed functions can open their own
+    return db_file
