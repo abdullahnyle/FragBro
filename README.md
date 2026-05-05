@@ -14,7 +14,7 @@ This project is built in public, in phases, as part of a long-term portfolio foc
 **Started:** April 2026
 **Phase 1 target ship date:** Mid-2026
 
-The project is in active early development. The data model is locked, the codebase is being built up from scratch, and a live demo is planned at the end of Phase 1.
+The project is in active early development. The data model is locked, a working CLI and HTTP API are in place, and a live demo is planned at the end of Phase 1.
 
 ---
 
@@ -38,7 +38,7 @@ The project follows a five-phase arc designed to grow one coherent system, rathe
 
 | Phase | Focus | Status |
 |---|---|---|
-| **1. Foundations** | SQLite tracker, data model, deployed live | In progress |
+| **1. Foundations** | SQLite tracker, data model, HTTP API, deployed live | In progress |
 | **2. Classical ML** | Recommender with questionnaire and blind-buy scoring | Planned |
 | **3. NLP / Embeddings** | Semantic search over fragrance reviews + technical blog post | Planned |
 | **4. Breadth** | Self-published benchmark evaluating embedding models | Planned |
@@ -48,21 +48,25 @@ The data model and core schema are designed to survive across phases — Phase 1
 
 ---
 
-## Tech stack (planned)
+## Tech stack
 
 | Layer | Choice | Reasoning |
 |---|---|---|
 | Language | Python | Primary language for ML and backend |
 | Database (Phase 1) | SQLite | Single file, no server, fast iteration |
 | Database (Phase 2+) | PostgreSQL | Multi-user concurrency for live deployment |
-| Backend | TBD (Phase 2) | Likely FastAPI for ML-friendly Python web APIs |
-| Frontend | TBD (Phase 2) | Likely Next.js or vanilla PWA |
+| CLI | Typer | Auto-generated `--help`, type-driven commands |
+| HTTP API | FastAPI + Uvicorn | Modern, type-driven, auto-generated interactive docs; same stack used for ML model serving in Phase 3 |
+| Validation | Pydantic | Request body validation built into FastAPI |
+| Testing | pytest | Standard, low-friction Python testing |
+| Frontend | TBD (Phase 1 → 2) | Likely vanilla first, then Next.js |
 | ML hosting (Phase 3+) | Hugging Face Spaces | Standard for ML model demos |
 | Deployment | Railway / Render + Vercel | Free-tier friendly for student projects |
 
 The stack is intentionally chosen to be production-realistic but achievable for a solo builder.
 
 ---
+
 ## Quickstart
 
 ```bash
@@ -75,18 +79,22 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1  # Windows
 # source venv/bin/activate    # Mac/Linux
 
-# Install dependencies
+# Install dependencies (use the second form if you want to run tests)
 pip install -e .
+# pip install -e ".[dev]"
 
 # Initialize and seed the database
 fragbro init
 fragbro seed
+fragbro seed-personal
 
-# Try it
+# Try the CLI
 fragbro list
 fragbro show Khamrah
 fragbro stats
+fragbro wear-stats
 ```
+
 ## Running the API
 
 FragBro also exposes an HTTP API for programmatic access (and for the upcoming web frontend).
@@ -96,17 +104,45 @@ uvicorn fragbro.api:app --reload
 ```
 
 Then open:
-- `http://localhost:8000/docs` — interactive API documentation
+- `http://localhost:8000/docs` — interactive API documentation (try every endpoint in your browser)
 - `http://localhost:8000/fragrances` — list all fragrances as JSON
 - `http://localhost:8000/wear-stats` — wearing analytics
 
-The API and CLI share the same database — you can log a wear via the CLI and see it instantly via `/wear-stats`.
+The API and CLI share the same database — you can log a wear via the CLI and see it instantly via `/wear-stats`, and vice versa.
+
+### Endpoints
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/` | Health check |
+| GET | `/fragrances` | List all fragrances |
+| GET | `/fragrances/{name}` | Full details for one fragrance (case-insensitive) |
+| GET | `/collection` | Owned fragrances sorted by rating |
+| GET | `/wishlist` | Wishlist with dupe relationships |
+| GET | `/wear-stats` | Wearing analytics |
+| GET | `/stats` | Database summary stats |
+| POST | `/wear` | Log a wear (JSON body, Pydantic-validated) |
+
+## Tests
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+---
 
 ## Documentation
 
 Project documentation lives in the [`/docs`](./docs) folder.
 
 - [Data Model — Phase 1](./docs/data_model.md) — full table-by-table schema design
+- [Engineering Log](./docs/weeklog.md) — day-by-day record of what got built, lessons learned, and recoveries
+
+Reference files in the repo root:
+- [Glossary](./GLOSSARY.md) — plain-language definitions for every technical term used in the project
+- [Backlog](./BACKLOG.md) — inbox for new ideas (added during a phase, evaluated at phase-shift)
+- [Future Features](./FUTURE_FEATURES.md) — deferred features with reasoning
 
 ---
 
