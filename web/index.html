@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FragBro — Catalog</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: #fafafa;
+      color: #1a1a1a;
+    }
+    h1 {
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    .frag-card {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .frag-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .frag-brand {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .frag-accords {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #444;
+    }
+    .frag-dupe {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #0066cc;
+    }
+    .loading, .error {
+      padding: 1rem;
+      text-align: center;
+      color: #666;
+    }
+    .error {
+      color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>FragBro</h1>
+  <p class="subtitle">Catalog</p>
+  <div id="frag-list">
+    <div class="loading"><Loading class=""></Loading></div>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    async function loadFragrances() {
+      const container = document.getElementById("frag-list");
+      try {
+        const response = await fetch(`${API_BASE}/fragrances`);
+        if(!response.ok){
+        throw new Error(`API returned ${response.status}`);
+        }
+        const fragrances = await response.json();
+        renderFragrances(fragrances, container);
+      } catch(err){
+       container.innerHTML=`<div class="error">Failed to load: ${err.message}</div>`;
+
+        }
+      }
+
+        function renderFragrances(fragrances, container) {
+        if (fragrances.length === 0) {
+        container.innerHTML=`<div class="loading">No fragrances yet.</div>`;
+      }
+      container.innerHTML = fragrances.map(frag => `
+      <div class="frag-card">
+        <div class="frag-name">${frag.name}</div>
+        <div class="frag-brand">${frag.brand || ""}</div>
+        <div class="frag-accords">${frag.accords || ""}</div>
+        ${frag.dupe_of_name ? ` <div class ="frag-dupe">Dupe of: ${frag.dupe_of_name} (${frag.dupe_of_brand})</div>` : ""}
+        </div>
+        `).join("");
+      }
+
+      loadFragrances();
+      </script
+      </body>
+      </html>
