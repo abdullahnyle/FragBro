@@ -48,3 +48,5 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+# Private working notes - never commit
+.private/
