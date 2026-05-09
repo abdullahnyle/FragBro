@@ -81,8 +81,9 @@
       }
 
         function renderFragrances(fragrances, container) {
-        if (fragrances.length === 0) {
+        if (fragrances.length === 0){
         container.innerHTML=`<div class="loading">No fragrances yet.</div>`;
+        return;
       }
       container.innerHTML = fragrances.map(frag => `
       <div class="frag-card">
@@ -95,6 +96,6 @@
       }
 
       loadFragrances();
-      </script
+      </script>
       </body>
       </html>
