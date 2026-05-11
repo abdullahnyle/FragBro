@@ -175,3 +175,11 @@ A human-language descriptor of how a fragrance feels in use ("clean," "soapy," "
 
 **Backlog**
 The inbox file (`BACKLOG.md`) where new ideas are captured during a phase. Items are evaluated only at phase-shift checkpoints, never mid-phase.
+
+## Day 8 — Backlog: GLOSSARY updates pending
+
+Two batches of new terms to add when energy allows (low-priority, easy work for a tired evening):
+
+**From Step 6 walkthrough (Day 6):** const/let, async/await, Promise, synchronous vs asynchronous, DOM, getElementById, try/catch, fetch, template literal, response.ok, response.status, throw new Error, response.json, JSON, innerHTML, XSS, array.map, arrow function, ||, ternary operator, array.join, falsy values, dependency injection, empty state, ===, REPL, DevTools.
+
+**From Day 8 tooling:** Node.js, npm, LTS vs Current, package.json, package-lock.json, node_modules, Vite, ESLint, JSX (anticipated for Day 9), LF vs CRLF.
