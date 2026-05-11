@@ -14,3 +14,17 @@
 
 ## Items
 _Empty for now. Items will be added as ideas come up during Phase 1 build._
+
+## Day 6 — Framework decision: Vite + React
+
+Decided to migrate frontend from vanilla HTML/JS to Vite + React, starting next session (Day 7+ evening or Day 8).
+
+**Reasoning:** React is on the critical path for FragBro — the questionnaire (next interactive feature) needs forms, state, validation, conditional rendering. Switching now (calm pre-exam window) frees future bandwidth for internship + studies during exam crunch.
+
+**Migration commitment:**
+- Port existing fragrance list to React (no abandoning vanilla work — proper migration)
+- Build one new view in React (wear-stats or collection) before adding any other features
+- No shiny-tool detours (no Tailwind/shadcn/etc. until baseline React is fluent)
+- 2-3 weekend window
+
+**Date locked:** Day 6 (Saturday May 9, 2026)
