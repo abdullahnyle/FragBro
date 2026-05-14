@@ -4,17 +4,16 @@
 FragBro — a fragrance recommendation PWA (Progressive Web App). Mobile-first, shareable via link. Questionnaire-based recommendations in v1, evolving to embedding-based natural language search. Feature set includes blind-buy scoring, personal collection tracking, wear logs, wishlist, and later: influencer collections and community features.
 
 ## Current phase
-Phase 1: Warm-up — the project has a CLI, tested database layer, working HTTP API with interactive documentation, and a minimal browser frontend that fetches from the API and renders the catalog. Personal `.dev` domain claimed and locked down.
+Phase 1: Warm-up — the project has a CLI, tested database layer, working HTTP API with interactive documentation, a vanilla browser frontend kept as reference, and an in-progress React migration with multiple FragranceCard components rendering from a hardcoded array. Personal `.dev` domain claimed and locked. Hosting accounts (DigitalOcean + Vercel) claimed.
 
 ## This week's goal
-Complete the framework migration from vanilla HTML/JS to Vite + React. Port existing fragrance list to React, then build one new view (wear-stats or collection) before adding any new features.
+Complete the React migration to functional parity with the vanilla version. Specifically: wire up real API fetch via `useEffect` + `useState`, add conditional rendering for dupe info, add minimal styling. Then `web/` (vanilla) can be retired.
 
 ## Last session
-Day 6 — Saturday May 9. Closed several items: `.dev` domain claimed (`abdullahnyle.dev` via Name.com / Student Pack, auto-renewal disabled, 2FA enabled, calendar reminder set for April 2027). Step 6 walkthrough complete — full line-by-line review of `web/index.html` JS section covering `const`/`let`, `async`/`await`, `fetch`, Promises, `try`/`catch`, template literals, DOM access, `.map().join()`, ternary, fallback pattern. Empty-state bug spotted in `renderFragrances`, fixed via early-return guard pattern (Bucket 2 drill, three iterations, final fix written by hand). Framework decision locked: switching to Vite + React next session.
+Day 9 — Tuesday May 12. Migration Step 1 complete: defined an array of 3 hardcoded fragrance objects in `App.jsx`, rendered them via `.map()` over `<FragranceCard>` components with `key` prop. The React equivalent of the vanilla `.map().join("")` pattern is now in place. Bucket-1 first-encounter work — concept taught with non-FragBro examples (fruits, people), then applied. Three structural bugs caught in first draft (missing array definition, `.map()` outside return, arrow function with braces but no return) — all corrected via Draft-then-Review. Notion Education Plus claimed via Student Pack at end of session.
 
 ## Next step
-## Next step
-Day 9 (next session): begin React migration. Port the existing fragrance list — first real component is `FragranceCard.jsx`, fetch via `useEffect`, render via `.map()` over an array of cards. Verify parity with vanilla `web/index.html`. Also deferred: Day 5 weeklog (in voice, fresh brain), career conversation.
+Day 10 (next session): Migration Step 2 — replace hardcoded array with real API fetch via `useEffect` and `useState`. First encounter with React state and effects. After that: Step 3 (dupe conditional rendering + minimal CSS) to reach functional parity with `web/index.html`. Then vanilla version can be retired.
 
 ## Key decisions
 - Product name: FragBro (capital F, capital B, everywhere)
@@ -22,8 +21,10 @@ Day 9 (next session): begin React migration. Port the existing fragrance list �
 - Language: Python primary, JavaScript secondary
 - Database: SQLite for Phase 1, PostgreSQL for Phase 2+
 - Web framework: FastAPI
-- Frontend approach: vanilla HTML/CSS/JS for warm-up complete; **migrating to Vite + React** Day 7+ (decision locked Day 6)
+- Frontend approach: vanilla HTML/CSS/JS retired soon; **Vite + React active** (decision locked Day 6)
 - Personal domain: `abdullahnyle.dev` (Name.com, free year 1 via GitHub Student Pack, ~$22.99/year after)
+- Backend hosting (planned): DigitalOcean ($200 credit claimed, $100 spend alert configured)
+- Frontend hosting (planned): Vercel (account claimed)
 - Repo: github.com/abdullahnyle/FragBro
 
 ---
@@ -104,12 +105,13 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 
 ---
 
-# Build Status — End of Day 8 (Monday May 11, 2026)
+# Build Status — End of Day 9 (Tuesday May 12, 2026)
+
 ## Repository
 
 - **GitHub:** `https://github.com/abdullahnyle/FragBro`
 - **Local path:** `D:\GitHub\FragBro`
-- **Latest commit:** Day 6 empty-state bug fix in `renderFragrances` (committed and pushed)
+- **Latest commit:** Day 9 — multiple FragranceCards rendered via `.map()` over hardcoded array
 - **Branch:** `main`
 - **Domain:** `abdullahnyle.dev` (registered, auto-renewal disabled, 2FA enabled). Planned subdomain for FragBro deployment: `fragbro.abdullahnyle.dev`
 
@@ -118,10 +120,10 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 ### Documentation
 - `README.md` — project framing, roadmap, tech stack, quickstart, API section
 - `docs/data_model.md` — full Phase 1 schema spec for all 7 tables
-- `docs/weeklog.md` — engineering log (Day 5 entry pending — deferred to Day 7 morning)
-- `BACKLOG.md` — inbox for new ideas (Day 6 added: framework decision entry, dev_workflow.md task, Copilot vs Codex inline decision, defensive `.com` registration question)
+- `docs/weeklog.md` — engineering log (Day 5 entry still pending)
+- `BACKLOG.md` — inbox for new ideas
 - `FUTURE_FEATURES.md` — deliberately deferred features
-- `GLOSSARY.md` — plain-language reference for technical terms (Day 6 additions pending: ~20 new terms from Step 6 walkthrough)
+- `GLOSSARY.md` — plain-language reference for technical terms (Day 6 + Day 8 + Day 9 additions still pending)
 - `tests/README.md` — test suite usage guide
 
 ### Project infrastructure
@@ -130,7 +132,7 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 - `requirements.txt` mirrors runtime deps
 - `.vscode/settings.json` — venv auto-activation, pytest panel, hidden cache folders
 - `.gitignore` covering Python, venv, IDE, OS, data files, logs, Jupyter, .private/
-- Project structure: `src/fragbro/`, `tests/`, `data/`, `docs/`, `web/`
+- Project structure: `src/fragbro/`, `tests/`, `data/`, `docs/`, `web/`, `frontend/`
 - PowerShell execution policy set to RemoteSigned (CurrentUser scope)
 - Desktop/taskbar shortcut targeting VS Code with FragBro as workspace
 
@@ -159,22 +161,22 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 - Pydantic-validated POST body
 - Run with: `uvicorn fragbro.api:app --reload`
 
-### Frontend (`web/index.html`) — vanilla, to be migrated to React Day 7+
+### Frontend (`web/index.html`) — vanilla, retired soon
 - Vanilla HTML + inline CSS + inline JS (no framework)
 - Calls GET /fragrances on load
 - Renders 11 cards with name, brand, accords, dupe relationships
-- async/await, fetch, try/catch, DOM manipulation, template literals, .map().join()
-- Closes browser → API → DB → JSON → DOM loop
-- **Day 6:** empty-state bug fixed via early-return guard pattern. Closing `</script>` tag corrected. Step 6 walkthrough complete — every line understood, not just working.
+- Full browser → API → DB → JSON → DOM loop
+- **Day 6:** empty-state bug fixed via early-return guard pattern. Closing `</script>` tag corrected. Step 6 walkthrough complete — every line understood.
+- **Status:** kept as reference until React reaches parity. Retired once Day 10 Step 2 (fetch) + Step 3 (dupe conditional + styling) ship.
 
-### Frontend — React (`frontend/`) — Day 8 scaffold only
-- Vite + React app scaffolded via `npm create vite@latest frontend -- --template react`
-- Node 24 LTS, npm 11.12.1, Vite v8.0.12
-- Default scaffold rendering at `http://localhost:5173/`
-- Counter component verified — React state management working
-- No FragBro features yet — migration begins Day 9
-- `node_modules/` gitignored via `frontend/.gitignore`
+### Frontend — React (`frontend/`) — Day 9 in progress
+- Vite + React app at `frontend/`, Node 24 LTS, npm 11.12.1, Vite v8.0.12
+- Renders at `http://localhost:5173/`
 - Run: `cd frontend && npm run dev`
+- **Day 8:** scaffold created. First FragranceCard component built with `props.frag` (Sauvage hardcoded). Three-iteration drill at session-end on a `frog`/`frag` typo (30+ min debug) — taught the "trace backward from symptom line to cause line" pattern.
+- **Day 9 Step 1:** array of 3 hardcoded fragrance objects in App.jsx, rendered via `{fragrances.map(frag => <FragranceCard key={frag.name} frag={frag} />)}`. React equivalent of vanilla `.map().join("")` complete.
+- **Day 9 outstanding:** Step 2 (useEffect + useState for real API fetch), Step 3 (dupe conditional + CSS styling).
+- `node_modules/` gitignored via `frontend/.gitignore`
 
 ### Test suite (`tests/`)
 29 passing tests via pytest:
@@ -183,7 +185,7 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 - tests/test_seed.py — 8 tests
 - tests/test_api.py — 12 tests
 
-## Database stats (end of Day 6)
+## Database stats
 - Fragrances: 11
 - Users: 1
 - Collection entries: 4
@@ -192,17 +194,20 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 - DNA families: 1
 - Dupe relationships: 4
 
+(Unchanged since Day 6 — no DB writes have happened recently.)
+
 ## Engineering patterns used
-- Dependency injection for testability (optional db_path; render functions take container as argument, not global)
+- Dependency injection for testability (optional db_path; React components receive data via props, not global access)
 - Idempotent seeds
 - Two-pass insertion (NULL dupe_of_id, then UPDATE)
 - Parameterized queries (no string concatenation)
 - Separation of catalog vs personal data
-- __main__ idiom for runnable modules
 - Pydantic-validated request bodies
 - One database layer, two doorways (CLI and API)
 - Browser DevTools as the source of truth for frontend bugs (not VS Code Problems tab)
 - Early-return guard pattern for empty-state handling
+- `.map()` for list rendering (vanilla and React variants of the same pattern)
+- `key` prop on every element rendered via `.map()` in React
 
 ## Coverage so far
 
@@ -210,7 +215,9 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 
 **HTTP/API:** GET, POST, path parameters, JSON request/response, status codes (200/201/404/422/400), Pydantic validation, CORS, auto-generated OpenAPI docs
 
-**JavaScript/Frontend:** fetch, async/await, try/catch, Promises, DOM manipulation (getElementById, innerHTML), template literals, arrow functions, .map() and .join(), ternary operator, fallback pattern (`||`), early-return guard, browser DevTools (Console + Network tabs), CORS in browser context, URL encoding (%7D etc), Live Server workflow, REPL concept
+**JavaScript/Frontend (vanilla):** fetch, async/await, try/catch, Promises, DOM manipulation (getElementById, innerHTML), template literals, arrow functions, .map() and .join(), ternary operator, fallback pattern (`||`), early-return guard, browser DevTools (Console + Network tabs), CORS in browser context, URL encoding, Live Server workflow, REPL concept
+
+**JavaScript/Frontend (React):** Vite scaffold + dev server, JSX (Fragment `<></>`, `className` not `class`, `{}` expression escape), components (PascalCase function returning JSX), `props` parameter, default + named imports, `.map()` returning JSX array, `key` prop for list rendering, `export default`, hot module reload (HMR), npm/package.json, node_modules gitignored, LF vs CRLF warnings
 
 ## Pace
 
@@ -220,36 +227,29 @@ Starting Phase 3 (Sept 2026 target), one whiteboard-style problem per week. 30-4
 - Day 4 (May 5): Venv auto-activation, taskbar shortcut, Student Pack approved
 - Day 5 (May 8): First frontend, 8+ bug debug session, engineering rules v2 locked
 - Day 6 (May 9): `.dev` domain claimed, Step 6 walkthrough complete, empty-state bug fixed, framework decision locked (Vite + React next session)
-- Day 8 (May 11): Vite + React scaffold, Node 24 LTS verified, foundation only — no migration yet
-Currently 2+ weeks ahead of original Phase 1 schedule.
+- Day 7 (May 10): rest day, no project work (post-family-visit recovery)
+- Day 8 (May 11): Vite + React scaffold, Node 24 LTS verified, first FragranceCard component with props (Sauvage hardcoded), DigitalOcean + Vercel claimed, GitHub profile README live
+- Day 9 (May 12): Migration Step 1 — multiple cards via `.map()` over hardcoded array, `key` prop pattern internalized, Notion Education Plus claimed
 
-## Pending admin
+Currently 2+ weeks ahead of original Phase 1 schedule (against the conservative "8 weeks after exams" target).
 
-- ~~Switch git remote URL to capital FragBro~~ ✅ done (verified Day 6)
-- ~~`.dev` domain registration~~ ✅ done (Day 6, `abdullahnyle.dev`)
-- GitHub Student Pack remaining benefits to claim:
-  - Railway / Render hosting credits — claim before deployment
-  - GitHub Copilot 2-year free — **decision needed** before claiming (vs Codex inline; tracked in BACKLOG.md)
-  - Notion Pro
-- Day 5 weeklog entry — defer to Day 7 morning
-- Day 6 GLOSSARY additions — ~20 terms from Step 6 walkthrough
+## Hosting + tooling accounts claimed
 
-## Next session targets (Day 7 — Sunday May 10)
+- **GitHub Student Pack** — active
+- **Name.com** — `.dev` domain
+- **DigitalOcean** — $200 credit (1 year), single $100 spend alert configured. Multi-tier alerts deferred for daytime check.
+- **Vercel** — Free Hobby tier, username `abdullahnyle`
+- **Notion** — Education Plus plan
 
-**Morning (fresh brain):**
-1. Day 5 weeklog entry (discursive, full prose, 400-700 words)
-2. Commit BACKLOG.md + weeklog together
-3. Career conversation — finish what was opened on Day 5
+## Deferred items (real, not lost)
 
-**Evening unavailable** — family commitment.
-
-## Following session targets (Day 7+ evening or Day 8)
-
-1. Vite + React setup
-2. Port `web/index.html` to React (proper migration, not abandonment)
-3. First component: FragranceCard
-4. Verify parity with vanilla version
-5. Then: build one new view (wear-stats or collection) in React before adding any new features
+- Day 5 weeklog (in voice, fresh brain)
+- Career conversation continuation (needs coffee-in-hand morning slot)
+- LinkedIn buildout (daytime energy)
+- GLOSSARY additions — Day 6 Step 6 terms (~20), Day 8 tooling terms, Day 9 React terms
+- DigitalOcean billing alert multi-tier check (daytime)
+- Copilot vs Codex inline decision (BACKLOG)
+- Defensive `.com` registration question (BACKLOG, decide post-P1)
 
 ## Working session rules
 
@@ -261,6 +261,4 @@ Currently 2+ weeks ahead of original Phase 1 schedule.
 - Coursework + gym are non-negotiable; project work is bounded
 - Large file pastes: delete file first, recreate empty, then paste — avoids decorator collisions
 - Bounded sessions and hard stops — discipline of stopping compounds
-
-## Last session
-Day 8 — Monday May 11. Vite + React scaffold created in new `frontend/` folder (Option 1 monorepo pattern). Node 24 LTS + npm verified. Default React app rendering at `http://localhost:5173/`, counter component confirms state management working. `node_modules/` properly gitignored. `web/` (vanilla) kept as reference until React reaches parity. No migration work yet — tonight was foundation only. Sunday was rest (post-family-visit), career conversation deferred. Day 5 weeklog still deferred.
+- Two servers run during frontend work: `uvicorn` (port 8000) + `vite` (port 5173). Both must stay running. Connection-refused errors = check servers first.
