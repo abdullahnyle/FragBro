@@ -29,10 +29,12 @@ function App() {
   return (
     <>
       <h1>FragBro</h1>
-      <p>Catalog</p>
-      {fragrances.map(frag => (
-        <FragranceCard key={frag.id} frag={frag} />
-      ))}
+      <p className="catalog-label">Catalog</p>
+      <div className="frag-grid">
+        {fragrances.map(frag => (
+          <FragranceCard key={frag.id} frag={frag} />
+        ))}
+      </div>
     </>
   )
 }
