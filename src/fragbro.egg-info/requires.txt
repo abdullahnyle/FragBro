@@ -1,0 +1,6 @@
+typer
+fastapi
+uvicorn
+
+[dev]
+pytest>=8.0.0
