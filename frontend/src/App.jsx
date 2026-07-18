@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import FragranceCard from './FragranceCard'
+import Stats from './Stats'
 import './App.css'
 
 function App() {
@@ -29,6 +30,8 @@ function App() {
   return (
     <>
       <h1>FragBro</h1>
+      <p className="section-label">Collection analytics</p>
+      <Stats />
       <p className="catalog-label">Catalog</p>
       <div className="frag-grid">
         {fragrances.map(frag => (
