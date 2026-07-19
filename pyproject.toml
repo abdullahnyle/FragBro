@@ -1,7 +1,7 @@
 [project]
 name = "fragbro"
 version = "0.1.0"
-description = "Fragrance decision assistant — semantic search and recommendation over subjective product reviews."
+description = "Fragrance collection analytics — a SQL query layer over a personal SQLite database."
 authors = [
     { name = "Abdullah", email = "abdullahnyle@icloud.com" }
 ]
