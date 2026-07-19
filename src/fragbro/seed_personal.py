@@ -98,10 +98,25 @@ COLLECTION = [
 # (fragrance_name, wear_date, occasion, weather, performance_rating, mood)
 
 WEAR_LOGS = [
-    ("Platinum", "2026-04-27", "uni", None, None, None),
-    ("Khamrah", "2025-12-30", "evening out", "cool", None, None),
-    ("Liquid Brun", "2025-03-10", "casual", None, None, None),
+    # Fattan — the workhorse. Small bottle, highest rotation, still current.
+    ("Fattan", "2026-07-14", "uni", "hot", 8.0, "confident"),
+    ("Fattan", "2026-06-28", "casual", "hot", 7.5, "relaxed"),
+    ("Fattan", "2026-06-09", "uni", "warm", 8.0, "focused"),
+    ("Fattan", "2026-05-21", "casual", "warm", 7.5, None),
     ("Fattan", "2026-04-02", "casual", None, None, None),
+
+    # Platinum — steady uni default. Medium frequency, recent.
+    ("Platinum", "2026-07-06", "uni", "hot", 7.0, "neutral"),
+    ("Platinum", "2026-06-15", "uni", "warm", 7.5, "sharp"),
+    ("Platinum", "2026-04-27", "uni", None, None, None),
+
+    # Khamrah — tapering out of rotation (benched for Qahwa). Clusters earlier, then stops.
+    ("Khamrah", "2026-02-14", "evening out", "cool", 6.5, "cozy"),
+    ("Khamrah", "2026-01-11", "evening out", "cold", 6.0, "warm"),
+    ("Khamrah", "2025-12-30", "evening out", "cool", None, None),
+
+    # Liquid Brun — beloved (9.5) but neglected. Rare, old last-wear = the standout analytics story.
+    ("Liquid Brun", "2025-03-10", "casual", None, None, None),
 ]
 
 
