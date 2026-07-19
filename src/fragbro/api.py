@@ -18,7 +18,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from fragbro.database import get_connection
+from fragbro.database import get_connection, initialize_database
+from fragbro.seed import seed_all
+from fragbro.seed_personal import seed_personal
 
 
 # Create the FastAPI application.
@@ -38,6 +40,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ---------- Startup: self-seed the database ----------
+
+@app.on_event("startup")
+def _seed_on_startup() -> None:
+    """
+    On a fresh or ephemeral host (e.g. a container with no persistent disk),
+    the SQLite file won't exist yet. Build the schema and load seed data at
+    boot so the API always has data to serve.
+
+    Every operation here is idempotent:
+      - initialize_database() uses CREATE TABLE IF NOT EXISTS
+      - seed_all() / seed_personal() guard against duplicate inserts
+    so this is safe to run on every startup, including local dev.
+    """
+    initialize_database()
+    seed_all()
+    seed_personal()
 
 
 # ---------- Helpers ----------
