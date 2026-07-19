@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 import FragranceCard from './FragranceCard'
 import Stats from './Stats'
+import { API_URL } from './config'
 import './App.css'
-
 function App() {
   const [fragrances, setFragrances] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/fragrances')
+    fetch(`${API_URL}/fragrances`)
       .then(res => {
         if (!res.ok) throw new Error(`API returned ${res.status}`)
         return res.json()
@@ -23,10 +22,8 @@ function App() {
         setLoading(false)
       })
   }, [])
-
   if (loading) return <p>Loading fragrances...</p>
   if (error) return <p>Error loading fragrances: {error}</p>
-
   return (
     <>
       <h1>FragBro</h1>
@@ -41,5 +38,4 @@ function App() {
     </>
   )
 }
-
 export default App
