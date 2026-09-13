@@ -1,24 +1,61 @@
 # FragBro
 
-A fragrance decision assistant, semantic search and recommendation over subjective product reviews, applied to fragrances. This was meant to be the spine of an 18-month portfolio, with a 5-phase roadmap: SQLite and a FastAPI backend first, then a real frontend, then a move to PostgreSQL and a live launch.
+I built FragBro around my interest in fragrances. It keeps track of what I own, what I want to try and what I actually wear.
 
-**I'm not actively building this anymore.** My focus shifted toward health data, which is where `label-vs-reality` came from, and FragBro didn't fit alongside it. This wasn't a project that stalled or broke. It was working, and I chose to put my time into something else instead.
+The app has a React frontend, a FastAPI backend and a SQLite database. It started as a command-line tool, and the CLI still works alongside the web app.
 
-## What actually got built
+## What it does
 
-7 SQLite tables covering fragrances, users, collections, and wear logs, with a many-to-many relationship for scent-family tagging and a self-reference for tracking cheaper dupes of a given fragrance. A FastAPI backend with a real HTTP API, auto-generated docs, and CORS set up for local frontend work. A pytest suite that never touched the real database, using fixtures and a throwaway test DB. A frontend that started in vanilla HTML and JS and got migrated to Vite and React partway through, once the next feature I wanted to build (a matching questionnaire) needed real form state that vanilla JS wasn't going to handle well. And a working analytics view, wear counts, most-worn fragrances, longest-untouched items, all pulled from real logged data.
+- Browse the fragrance catalog with names, brands and scent accords.
+- Keep collection ratings, wishlist notes and links between dupes and their originals in the database.
+- Log wears through the CLI or API, including the date, occasion, weather and rating.
+- Show wear counts, most-worn fragrances and how long owned bottles have gone untouched.
 
-## What didn't happen
+The React view shows the catalog and wear statistics. Collection details, wishlist entries and wear logging are available through the API and CLI.
 
-Everything past Phase 1. No move to PostgreSQL, no semantic search over reviews (the actual "recommendation" half of the idea), no questionnaire. It stopped mid-way through the frontend migration.
+The database has seven tables. Fragrances link to scent families through a join table, and `dupe_of_id` links a fragrance to another entry in the catalog. The seed files contain a small catalog and records from my own collection.
 
-## The site's still up
+Recommendations were part of the original idea. The current version focuses on collection tracking and wear statistics; it does not include a questionnaire or semantic search.
 
-[fragbro.vercel.app](https://fragbro.vercel.app) is still live and shows real data I logged. It's slow and I'm not maintaining it, so if you land there after finding this repo, that's expected.
+[Frontend deployment](https://fragbro.vercel.app)
 
-## If you're looking at the code
+## Run locally
 
-`src/fragbro/` is the backend, `frontend/` is the React rewrite in progress, `web/` is the older vanilla JS version it was replacing, `tests/` is the test suite, `data/` is the database. `docs/` has notes from each build session, and `GLOSSARY.md` is a running list of things I looked up and explained to myself as I went, mostly useful if you're learning this stack for the first time.
+Use Python 3.10 or newer. From the repository root:
+
+```bash
+python -m venv .venv
+```
+
+Activate it with `source .venv/bin/activate` on macOS or Linux, or `.venv\Scripts\Activate.ps1` in Windows PowerShell. Then:
+
+```bash
+python -m pip install -e ".[dev]"
+uvicorn fragbro.api:app --reload
+```
+
+Startup creates `data/fragbro.db` if needed and loads the seed records. Open `http://127.0.0.1:8000/docs` to explore the API. Follow the [frontend instructions](frontend/README.md) to start React in a second terminal.
+
+The CLI uses the same database:
+
+```bash
+fragbro list
+fragbro collection
+fragbro wishlist
+fragbro wear "Fattan" --occasion uni
+fragbro wear-stats
+```
+
+The API and CLI use one seeded user. Account registration is not implemented.
+
+## Tests and source
+
+Run `python -m pytest` from the root. Tests cover the database schema, seed records, API responses and wear logging, using temporary SQLite files.
+
+- [src/fragbro](src/fragbro) contains the database, API, CLI and seed scripts.
+- [frontend](frontend) contains the React app. [web](web) keeps the earlier vanilla JavaScript version.
+- [Data model](docs/data_model.md) describes the tables and relationships.
+- [Glossary](GLOSSARY.md) contains my technical notes. [Build log](docs/weeklog.md) records the early work from May 2026.
 
 ## License
 

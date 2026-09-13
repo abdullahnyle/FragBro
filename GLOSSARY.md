@@ -41,7 +41,7 @@ A password substitute used to authenticate Git operations against GitHub. More s
 A plain-text format using simple symbols (`#`, `|`, `-`) to represent headers, tables, and lists. GitHub renders Markdown into formatted documents automatically.
 
 **README**
-The front-page document of a project. GitHub displays it below the file list when someone visits the repo URL. Must live at the root of the repo.
+The front-page document of a project. GitHub displays it below the file list when someone visits the repo URL. FragBro keeps its main README at the repository root.
 
 **`requirements.txt`**
 A standard Python file listing every external package the project depends on, with versions. Other developers (and deployment systems) read this file to install the right dependencies.
@@ -60,10 +60,10 @@ A simple text format for representing structured data — basically a dictionary
 An organized place to store data. Different kinds exist for different needs.
 
 **SQLite**
-A database that lives inside a single file. No server needed, no installation — just a `.db` file on disk. Used in FragBro Phase 1 for simplicity.
+A database that lives inside a single file. No server needed, no installation — just a `.db` file on disk. FragBro uses SQLite for its local database.
 
 **PostgreSQL**
-A more powerful database that runs as a server and handles many users at once. FragBro will migrate to PostgreSQL in Phase 2 when the app goes live.
+A more powerful database that runs as a server and handles many users at once. It was considered for FragBro, but the app currently uses SQLite.
 
 **Table**
 A structured collection of rows and columns inside a database — like a spreadsheet, but with strict types. FragBro has 7 tables (fragrances, users, collection, etc.).
@@ -75,7 +75,7 @@ A single piece of information in a table — for example, the `name` field of th
 A single entry in a table — for example, one specific fragrance like "J. Janan Platinum."
 
 **Primary key**
-A unique number that identifies each row. In FragBro, every table uses an `id` field as its primary key.
+A value or combination of values that identifies a row. Most FragBro tables use an `id` field; `fragrance_dna` uses the pair of fragrance and family IDs.
 
 **Foreign key**
 A field in one table that points to a row in another table. For example, `dupe_of_id` in the `fragrances` table is a foreign key pointing to the original fragrance.
@@ -162,24 +162,10 @@ A property of an operation: running it twice produces the same result as running
 ## Project terms
 
 **FragBro**
-A fragrance decision assistant — semantic search and recommendation over subjective product reviews, applied to fragrances. The spine project of an 18-month portfolio.
-
-**Phase**
-A defined stage of the FragBro roadmap with specific goals and a defined ship target. The project has 5 phases over ~18 months.
+A personal fragrance catalog with collection tracking and wear statistics.
 
 **DNA family**
 A scent identity category (e.g., "Barber Shop / Fougère") that captures the overall character of a fragrance, distinct from its individual notes. A fragrance can belong to multiple DNA families.
 
 **Vibe tag**
 A human-language descriptor of how a fragrance feels in use ("clean," "soapy," "headache-inducing"). Captures user-experienced reality, distinct from a perfumer's note pyramid.
-
-**Backlog**
-The inbox file (`BACKLOG.md`) where new ideas are captured during a phase. Items are evaluated only at phase-shift checkpoints, never mid-phase.
-
-## Day 8 — Backlog: GLOSSARY updates pending
-
-Two batches of new terms to add when energy allows (low-priority, easy work for a tired evening):
-
-**From Step 6 walkthrough (Day 6):** const/let, async/await, Promise, synchronous vs asynchronous, DOM, getElementById, try/catch, fetch, template literal, response.ok, response.status, throw new Error, response.json, JSON, innerHTML, XSS, array.map, arrow function, ||, ternary operator, array.join, falsy values, dependency injection, empty state, ===, REPL, DevTools.
-
-**From Day 8 tooling:** Node.js, npm, LTS vs Current, package.json, package-lock.json, node_modules, Vite, ESLint, JSX (anticipated for Day 9), LF vs CRLF.

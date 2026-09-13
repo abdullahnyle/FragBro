@@ -99,7 +99,7 @@ def test_wear_stats_shape(client):
     assert "total_wears" in data
     assert "most_worn_all_time" in data
     assert "owned_but_unworn" in data
-    assert data["total_wears"] == 4
+    assert data["total_wears"] == 12
 
 
 # ---------- Write endpoint ----------
@@ -116,7 +116,7 @@ def test_post_wear_success(client):
 
     # Verify it was actually persisted by checking stats
     stats = client.get("/wear-stats").json()
-    assert stats["total_wears"] == 5  # was 4, now 5
+    assert stats["total_wears"] == 13  # twelve seeded wears plus the new entry
 
 
 def test_post_wear_unknown_fragrance(client):

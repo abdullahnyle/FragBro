@@ -34,4 +34,4 @@ pytest -v
 - Test files start with `test_`
 - Test functions start with `test_`
 - Reusable fixtures live in `tests/conftest.py`
-- Tests use a temporary, in-memory-style SQLite database via the `tmp_db` fixture — they never touch `data/fragbro.db`
+- Tests use a temporary SQLite database file via the `tmp_db` fixture — they never touch `data/fragbro.db`

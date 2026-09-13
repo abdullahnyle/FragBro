@@ -90,7 +90,7 @@ def test_seed_personal_populates_collection_and_wishlist(tmp_db_path):
 
     assert collection == 4, f"Expected 4 collection entries, got {collection}"
     assert wishlist == 3, f"Expected 3 wishlist entries, got {wishlist}"
-    assert wears == 4, f"Expected 4 wear logs, got {wears}"
+    assert wears == 12, f"Expected 12 wear logs, got {wears}"
 
 
 def test_seed_personal_adds_extra_catalog(tmp_db_path):
@@ -121,4 +121,4 @@ def test_seed_personal_is_idempotent(tmp_db_path):
     assert users == 1, "Second personal seed run created duplicate user"
     assert collection == 4, "Second personal seed inflated collection"
     assert wishlist == 3, "Second personal seed inflated wishlist"
-    assert wears == 4, "Second personal seed inflated wear logs"
+    assert wears == 12, "Second personal seed inflated wear logs"
