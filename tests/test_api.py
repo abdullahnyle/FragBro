@@ -9,30 +9,15 @@ path so api.py reads from the test DB instead of the real one.
 import pytest
 from fastapi.testclient import TestClient
 
-from fragbro import api as api_module
 from fragbro.api import app
-from fragbro.seed import seed_all
-from fragbro.seed_personal import seed_personal
 
 
 @pytest.fixture
 def client(tmp_db_path, monkeypatch):
-    """A TestClient with a freshly seeded test database."""
-    seed_all(db_path=tmp_db_path)
-    seed_personal(db_path=tmp_db_path)
-
-    # Force api.py's database calls to use the test DB.
-    # We do this by monkeypatching the get_connection function
-    # that api.py imports.
-    from fragbro import database as db_module
-    original_get_connection = db_module.get_connection
-
-    def get_test_connection(db_path=None):
-        return original_get_connection(db_path=tmp_db_path)
-
-    monkeypatch.setattr(api_module, "get_connection", get_test_connection)
-
-    return TestClient(app)
+    from fragbro import database
+    monkeypatch.setattr(database, "DB_PATH", tmp_db_path)
+    with TestClient(app) as test_client:
+        yield test_client
 
 
 # ---------- Read endpoints ----------
@@ -102,29 +87,21 @@ def test_wear_stats_shape(client):
     assert data["total_wears"] == 12
 
 
-# ---------- Write endpoint ----------
-
-def test_post_wear_success(client):
-    response = client.post(
-        "/wear",
-        json={"name": "Fattan", "occasion": "test", "rating": 9.0},
-    )
-    assert response.status_code == 201
-    data = response.json()
-    assert data["fragrance"]["name"] == "Fattan"
-    assert data["occasion"] == "test"
-
-    # Verify it was actually persisted by checking stats
-    stats = client.get("/wear-stats").json()
-    assert stats["total_wears"] == 13  # twelve seeded wears plus the new entry
-
-
-def test_post_wear_unknown_fragrance(client):
-    response = client.post("/wear", json={"name": "NotARealFragrance"})
+def test_http_cannot_log_wears(client):
+    before = client.get("/wear-stats").json()["total_wears"]
+    response = client.post("/wear", json={"name": "Fattan", "rating": 9})
     assert response.status_code == 404
+    assert client.get("/wear-stats").json()["total_wears"] == before
+    paths = client.get("/openapi.json").json()["paths"]
+    assert all(set(operations) == {"get"} for operations in paths.values())
 
 
-def test_post_wear_missing_name(client):
-    response = client.post("/wear", json={"occasion": "test"})
-    # Pydantic returns 422 for validation errors, not 400
-    assert response.status_code == 422
+def test_startup_is_repeatable(tmp_path, monkeypatch):
+    from fragbro import database
+    monkeypatch.setattr(database, "DB_PATH", tmp_path / "fresh.db")
+    for _ in range(2):
+        with TestClient(app) as client:
+            counts = client.get("/stats").json()
+            assert counts["fragrances"] == 11
+            assert counts["wear_logs"] == 12
+            assert counts["collection_entries"] == 4

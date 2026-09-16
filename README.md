@@ -8,10 +8,10 @@ The app has a React frontend, a FastAPI backend and a SQLite database. It starte
 
 - Browse the fragrance catalog with names, brands and scent accords.
 - Keep collection ratings, wishlist notes and links between dupes and their originals in the database.
-- Log wears through the CLI or API, including the date, occasion, weather and rating.
+- Log wears locally through the CLI, including the date, occasion, weather and rating (0–10).
 - Show wear counts, most-worn fragrances and how long owned bottles have gone untouched.
 
-The React view shows the catalog and wear statistics. Collection details, wishlist entries and wear logging are available through the API and CLI.
+The React view shows the catalog and wear statistics. Collection details and wishlist entries are available through the API and CLI. The HTTP API is read-only; wear logging stays in the local CLI.
 
 The database has seven tables. Fragrances link to scent families through a join table, and `dupe_of_id` links a fragrance to another entry in the catalog. The seed files contain a small catalog and records from my own collection.
 
@@ -46,11 +46,11 @@ fragbro wear "Fattan" --occasion uni
 fragbro wear-stats
 ```
 
-The API and CLI use one seeded user. Account registration is not implemented.
+The API and CLI use one seeded user. Account registration and authentication are not implemented. The demo has no HTTP write endpoints; CORS allows public reads and is not an authentication mechanism.
 
 ## Tests and source
 
-Run `python -m pytest` from the root. Tests cover the database schema, seed records, API responses and wear logging, using temporary SQLite files.
+Run `python -m pytest` from the root. Tests cover the database schema, repeated startup/seeding, API responses, blocked HTTP writes and CLI validation, using temporary SQLite files.
 
 - [src/fragbro](src/fragbro) contains the database, API, CLI and seed scripts.
 - [frontend](frontend) contains the React app. [web](web) keeps the earlier vanilla JavaScript version.

@@ -10,6 +10,8 @@ Usage:
     fragbro stats
 """
 
+import math
+
 import typer
 from datetime import date as date_type
 from fragbro.database import get_connection, initialize_database
@@ -19,7 +21,7 @@ from fragbro.seed_personal import seed_personal
 
 app = typer.Typer(
     name="fragbro",
-    help="FragBro — fragrance decision assistant CLI.",
+    help="FragBro — fragrance collection and wear tracking CLI.",
     no_args_is_help=True,
 )
 
@@ -180,13 +182,27 @@ def wear(
         None, "--weather", "-w", help="Weather (e.g. 'warm and humid')."
     ),
     rating: float = typer.Option(
-        None, "--rating", "-r", help="Performance rating 0-10 for the day."
+        None, "--rating", "-r", min=0, max=10, help="Performance rating 0-10 for the day."
     ),
     mood: str = typer.Option(
         None, "--mood", "-m", help="Mood when wearing it."
     ),
 ) -> None:
     """Log a wear of a fragrance."""
+    wear_date = date_type.today().isoformat()
+    if date is not None:
+        try:
+            parsed_date = date_type.fromisoformat(date)
+        except ValueError:
+            raise typer.BadParameter("Use a valid date in YYYY-MM-DD format.", param_hint="--date") from None
+        if parsed_date.isoformat() != date:
+            raise typer.BadParameter("Use YYYY-MM-DD format.", param_hint="--date")
+        if parsed_date > date_type.today():
+            raise typer.BadParameter("A wear date cannot be in the future.", param_hint="--date")
+        wear_date = parsed_date.isoformat()
+    if rating is not None and not math.isfinite(rating):
+        raise typer.BadParameter("Rating must be a finite number from 0 to 10.", param_hint="--rating")
+
     connection = get_connection()
 
     # Resolve the user (just one user for now — yourself)
@@ -207,9 +223,6 @@ def wear(
         connection.close()
         raise typer.Exit(code=1)
     frag_id, frag_name, frag_brand = frag_row
-
-    # Default to today if no date passed
-    wear_date = date if date is not None else date_type.today().isoformat()
 
     connection.execute(
         """
@@ -282,8 +295,8 @@ def wishlist() -> None:
         typer.echo(f"  {brand} — {name}   (added {added})")
         if dupe_name:
             typer.echo(f"      dupe of: {dupe_brand} {dupe_name}")
-    if notes:
-        typer.echo(f"      note: {notes}")
+        if notes:
+            typer.echo(f"      note: {notes}")
     typer.echo("")
 
 

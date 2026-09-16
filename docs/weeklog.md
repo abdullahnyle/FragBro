@@ -1,6 +1,6 @@
 # FragBro Engineering Log
 
-A short, honest record of what got built each working session. Not a polished blog. The point is to capture the actual work — including dead ends, recoveries, and lessons — so future-me, recruiters, and admissions committees can see how this was actually built, not just what it ended up as.
+A record of the early work, including dead ends, recoveries and lessons. The entries describe the app at the time; the current HTTP API is read-only, with wear logging retained in the local CLI.
 
 ---
 
@@ -14,7 +14,7 @@ A short, honest record of what got built each working session. Not a polished bl
 - Repo created at `github.com/abdullahnyle/fragbro` (renamed from earlier `cologne` working name)
 - `README.md` — front page with project framing (positioned as semantic search and recommendation over subjective product reviews, applied to fragrances), roadmap, tech stack, quickstart
 - `docs/data_model.md` — full schema spec for Phase 1 tables
-- Data model validated against 5 real fragrances from my own collection: PDM Althair, PDM Percival, J. Janan Platinum, Lattafa Khamrah, Ahmed Al Maghribi Kaaf, French Avenue Liquid Brun, Rasasi Fattan
+- Data model validated against 7 real fragrances from my own collection: PDM Althair, PDM Percival, J. Janan Platinum, Lattafa Khamrah, Ahmed Al Maghribi Kaaf, French Avenue Liquid Brun, Rasasi Fattan
 - Initial project skeleton: `src/fragbro/`, `tests/`, `data/`, `docs/`
 - `.gitignore` covering Python, venv, IDE files, OS files, data files, logs, Jupyter junk
 - Decisions locked: product name (FragBro), delivery shape (mobile-first PWA), Python primary, SQLite for Phase 1
@@ -63,7 +63,7 @@ A short, honest record of what got built each working session. Not a polished bl
   - 3 wishlist entries
   - 4 extra catalog additions to support wishlist FKs
   - 2 extra dupe relationships
-- **CLI (`src/fragbro/cli.py`)** — built with Typer, 9 working commands:
+- **CLI (`src/fragbro/cli.py`)** — built with Typer, 10 working commands:
   - `init`, `seed`, `seed-personal`, `list`, `show`, `stats`, `wear`, `collection`, `wishlist`, `wear-stats`
 - **Test suite (`tests/`)** — built with pytest, 9 passing tests covering schema, columns, insert/read, foreign key enforcement (valid + invalid), required fields, unique constraints, GROUP BY analytics
 - `tests/conftest.py` — `tmp_db` fixture creating a throwaway database per test

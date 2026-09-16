@@ -12,53 +12,39 @@ Then open:
     http://localhost:8000/docs
 """
 
-from datetime import date as date_type
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 from fragbro.database import get_connection, initialize_database
 from fragbro.seed import seed_all
 from fragbro.seed_personal import seed_personal
 
 
-# Create the FastAPI application.
-# `title` and `description` show up on the auto-generated /docs page.
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_database()
+    seed_all()
+    seed_personal()
+    yield
+
+
 app = FastAPI(
     title="FragBro API",
-    description="Fragrance decision assistant — HTTP layer.",
+    description="Read-only fragrance catalog and wear statistics.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
-# CORS — allow browser frontends running on localhost to call this API.
-# Tighten this for production; permissive for dev.
+# Public catalog reads are allowed from any origin. Writes stay in the local CLI.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
-    allow_methods=["*"],
+    allow_methods=["GET"],
     allow_headers=["*"],
 )
-
-
-# ---------- Startup: self-seed the database ----------
-
-@app.on_event("startup")
-def _seed_on_startup() -> None:
-    """
-    On a fresh or ephemeral host (e.g. a container with no persistent disk),
-    the SQLite file won't exist yet. Build the schema and load seed data at
-    boot so the API always has data to serve.
-
-    Every operation here is idempotent:
-      - initialize_database() uses CREATE TABLE IF NOT EXISTS
-      - seed_all() / seed_personal() guard against duplicate inserts
-    so this is safe to run on every startup, including local dev.
-    """
-    initialize_database()
-    seed_all()
-    seed_personal()
 
 
 # ---------- Helpers ----------
@@ -74,22 +60,6 @@ def row_to_dict(cursor_description, row) -> dict:
     Caller must ensure `row` is not None.
     """
     return {col[0]: value for col, value in zip(cursor_description, row)}
-
-
-# ---------- Request models (validate incoming data) ----------
-
-class WearLogRequest(BaseModel):
-    """Schema for a POST /wear request body.
-
-    Pydantic auto-validates incoming JSON against this. Required fields
-    must be present; optional fields default to None.
-    """
-    name: str
-    date: str | None = None
-    occasion: str | None = None
-    weather: str | None = None
-    rating: float | None = None
-    mood: str | None = None
 
 
 # ---------- Endpoints ----------
@@ -303,60 +273,3 @@ def get_stats():
     }
     connection.close()
     return stats_data
-
-
-@app.post("/wear", status_code=201)
-def log_wear(payload: WearLogRequest):
-    """Log a wear of a fragrance. Returns the created wear log entry.
-
-    Response: 201 Created with the new entry.
-    Errors:   404 if the fragrance name doesn't exist.
-              400 if no user has been seeded yet.
-    """
-    connection = get_connection()
-
-    user_row = connection.execute("SELECT id FROM users LIMIT 1").fetchone()
-    if user_row is None:
-        connection.close()
-        raise HTTPException(
-            status_code=400,
-            detail="No user seeded. Run `fragbro seed-personal` first.",
-        )
-    user_id = user_row[0]
-
-    frag_row = connection.execute(
-        "SELECT id, name, brand FROM fragrances WHERE LOWER(name) = LOWER(?)",
-        (payload.name,),
-    ).fetchone()
-    if frag_row is None:
-        connection.close()
-        raise HTTPException(
-            status_code=404,
-            detail=f"Fragrance '{payload.name}' not found.",
-        )
-    frag_id, frag_name, frag_brand = frag_row
-
-    wear_date = payload.date if payload.date is not None else date_type.today().isoformat()
-
-    cursor = connection.execute(
-        """
-        INSERT INTO wear_logs
-            (user_id, fragrance_id, wear_date, occasion, weather, performance_rating, mood)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-        (user_id, frag_id, wear_date, payload.occasion, payload.weather,
-         payload.rating, payload.mood),
-    )
-    new_id = cursor.lastrowid
-    connection.commit()
-    connection.close()
-
-    return {
-        "id": new_id,
-        "fragrance": {"brand": frag_brand, "name": frag_name},
-        "wear_date": wear_date,
-        "occasion": payload.occasion,
-        "weather": payload.weather,
-        "rating": payload.rating,
-        "mood": payload.mood,
-    }
