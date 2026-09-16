@@ -313,8 +313,6 @@ def wear_stats() -> None:
 
     if total == 0:
         typer.echo("\nNo wears logged yet. Use `fragbro wear <name>` to log your first.")
-        connection.close()
-        return
 
     # --- Most worn, all-time ---
     typer.echo("\n--- Most worn (all time) ---")
@@ -338,7 +336,7 @@ def wear_stats() -> None:
         SELECT f.brand, f.name, COUNT(w.id) AS wear_count
         FROM wear_logs w
         JOIN fragrances f ON w.fragrance_id = f.id
-        WHERE w.wear_date >= date('now', '-30 days')
+        WHERE w.wear_date BETWEEN date('now', '-29 days') AND date('now')
         GROUP BY f.id
         ORDER BY wear_count DESC, f.name ASC
         LIMIT 5

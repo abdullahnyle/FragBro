@@ -1,10 +1,4 @@
-"""Tests for the FastAPI HTTP layer.
-
-Uses FastAPI's TestClient — runs requests in-process against the app
-without spinning up a real server. Each test gets a clean test database
-via the existing tmp_db_path fixture and monkeypatches the database
-path so api.py reads from the test DB instead of the real one.
-"""
+"""HTTP behavior against isolated SQLite databases, including app startup."""
 
 import pytest
 from fastapi.testclient import TestClient

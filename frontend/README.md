@@ -4,6 +4,8 @@ React catalog and wear statistics backed by the FastAPI application in `../src/f
 
 Start the backend using the root README, then run these commands here:
 
+Use Node.js 24 (the version selected in CI).
+
 ```bash
 npm ci
 npm run dev

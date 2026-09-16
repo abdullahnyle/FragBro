@@ -47,6 +47,7 @@ function Stats() {
       <div className="stats-lists">
         <div className="stats-list">
           <h3>Most worn</h3>
+          {stats.most_worn_all_time.length === 0 && <p>No wears logged yet.</p>}
           <ol>
             {stats.most_worn_all_time.map(f => (
               <li key={`${f.brand}-${f.name}`}>
@@ -57,7 +58,8 @@ function Stats() {
           </ol>
         </div>
         <div className="stats-list">
-          <h3>Longest untouched</h3>
+          <h3>Days since last logged wear</h3>
+          {stats.days_since_last_worn.length === 0 && <p>No dated wear history yet.</p>}
           <ol>
             {[...stats.days_since_last_worn]
               .sort((a, b) => b.days_ago - a.days_ago)
@@ -70,6 +72,16 @@ function Stats() {
           </ol>
         </div>
       </div>
+      {stats.owned_but_unworn.length > 0 && (
+        <div className="stats-list">
+          <h3>Owned with no logged wears</h3>
+          <ul>
+            {stats.owned_but_unworn.map(f => (
+              <li key={`${f.brand}-${f.name}`}>{f.brand} {f.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

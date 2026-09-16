@@ -28,6 +28,7 @@ function App() {
     <>
       <h1>FragBro</h1>
       <p className="section-label">Collection analytics</p>
+      <p>Read-only demo with a fixed set of collection and wear records.</p>
       <Stats />
       <p className="catalog-label">Catalog</p>
       <div className="frag-grid">

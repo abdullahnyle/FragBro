@@ -9,6 +9,7 @@ Running this file directly will create a fresh database at the
 configured path with all 7 tables ready to receive data.
 """
 
+import os
 import sqlite3
 from pathlib import Path
 
@@ -16,7 +17,10 @@ from pathlib import Path
 # Where the database file lives.
 # We put it inside the project's data/ folder so it's easy to find
 # and so .gitignore can exclude it from the repo.
-DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "fragbro.db"
+DB_PATH = Path(os.environ.get(
+    "FRAGBRO_DB_PATH",
+    Path(__file__).resolve().parent.parent.parent / "data" / "fragbro.db",
+)).expanduser()
 
 
 # SQL commands to create each table.
