@@ -11,9 +11,9 @@ Usage:
 """
 
 import math
+from datetime import date as date_type, datetime, timezone
 
 import typer
-from datetime import date as date_type
 from fragbro.database import get_connection, initialize_database
 from fragbro.seed import seed_all
 from fragbro.seed_personal import seed_personal
@@ -24,6 +24,12 @@ app = typer.Typer(
     help="FragBro — fragrance collection and wear tracking CLI.",
     no_args_is_help=True,
 )
+
+
+def _utc_today(now: datetime | None = None) -> date_type:
+    """Return the UTC calendar date used by wear analytics."""
+    current = now or datetime.now(timezone.utc)
+    return current.astimezone(timezone.utc).date()
 
 
 @app.command()
@@ -189,7 +195,8 @@ def wear(
     ),
 ) -> None:
     """Log a wear of a fragrance."""
-    wear_date = date_type.today().isoformat()
+    today = _utc_today()
+    wear_date = today.isoformat()
     if date is not None:
         try:
             parsed_date = date_type.fromisoformat(date)
@@ -197,7 +204,7 @@ def wear(
             raise typer.BadParameter("Use a valid date in YYYY-MM-DD format.", param_hint="--date") from None
         if parsed_date.isoformat() != date:
             raise typer.BadParameter("Use YYYY-MM-DD format.", param_hint="--date")
-        if parsed_date > date_type.today():
+        if parsed_date > today:
             raise typer.BadParameter("A wear date cannot be in the future.", param_hint="--date")
         wear_date = parsed_date.isoformat()
     if rating is not None and not math.isfinite(rating):

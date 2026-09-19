@@ -109,13 +109,13 @@ A single URL the API responds to. Each endpoint = one Python function. `/fragran
 The HTTP verb for "give me data" — read-only, no changes. Most FragBro endpoints are GET.
 
 **POST**
-The HTTP verb for "create something new." `POST /wear` creates a new wear log entry.
+The HTTP verb commonly used to create something new. FragBro's current HTTP API is read-only and does not expose POST endpoints; wear records are added through the local CLI.
 
 **Status code**
 A 3-digit number an HTTP response includes to indicate what happened. `200 OK` = success. `201 Created` = something new was created. `404 Not Found` = the thing you asked for doesn't exist. `422 Unprocessable Entity` = your request body failed validation. `500 Internal Server Error` = the server crashed.
 
 **JSON body**
-The data sent along with a POST/PUT/PATCH request, formatted as JSON. The body of `POST /wear` looks like `{"name": "Fattan", "occasion": "uni"}`.
+Data sent with a POST, PUT or PATCH request, formatted as JSON. FragBro currently returns JSON from its GET endpoints but does not accept HTTP write requests.
 
 **Path parameter**
 A piece of data captured directly from inside the URL. In `/fragrances/{name}`, whatever appears in place of `{name}` gets passed to the function as the `name` argument.

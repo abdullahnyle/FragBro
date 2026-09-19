@@ -1,9 +1,10 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 from typer.testing import CliRunner
 
 from fragbro import database
+from fragbro import cli as cli_module
 from fragbro.cli import app
 from fragbro.seed import seed_all
 from fragbro.seed_personal import WISHLIST, seed_personal
@@ -55,6 +56,26 @@ def test_unknown_fragrance_does_not_write(seeded_db):
     result = CliRunner().invoke(app, ["wear", "not in the catalog"])
     assert result.exit_code == 1
     assert seeded_db.execute("SELECT COUNT(*) FROM wear_logs").fetchone()[0] == before
+
+
+def test_default_wear_date_uses_utc_date(seeded_db, monkeypatch):
+    monkeypatch.setattr(cli_module, "_utc_today", lambda: date(2026, 1, 2))
+
+    result = CliRunner().invoke(app, ["wear", "Fattan"])
+
+    assert result.exit_code == 0, result.output
+    stored = seeded_db.execute(
+        "SELECT wear_date FROM wear_logs ORDER BY id DESC LIMIT 1"
+    ).fetchone()[0]
+    assert stored == "2026-01-02"
+
+
+def test_utc_date_does_not_follow_pakistan_midnight():
+    pakistan_time = datetime(
+        2026, 1, 2, 0, 30, tzinfo=timezone(timedelta(hours=5))
+    )
+
+    assert cli_module._utc_today(pakistan_time) == date(2026, 1, 1)
 
 
 def test_wishlist_prints_each_note(seeded_db):
