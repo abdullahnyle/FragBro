@@ -11,7 +11,7 @@ The app has a React frontend, a FastAPI backend and a SQLite database. It starte
 - Log wears locally through the CLI, including the date, occasion, weather and rating (0–10).
 - Show wear counts, most-worn fragrances and how long owned bottles have gone untouched.
 
-The React view shows the catalog and wear statistics. Collection details and wishlist entries are available through the API and CLI. The HTTP API is read-only; wear logging stays in the local CLI.
+The React view shows the catalog and wear statistics. The deployed view bundles the fixed seed snapshot, so it opens without waiting for the separate API host to wake up. Days since last wear are calculated from the recorded dates in the browser. Collection details and wishlist entries are available through the API and CLI. The HTTP API is read-only; wear logging stays in the local CLI.
 
 The database has seven tables. Fragrances link to scent families through a join table, and `dupe_of_id` links a fragrance to another entry in the catalog. The seed files contain a small catalog and a collection snapshot.
 
@@ -67,6 +67,8 @@ Set `FRAGBRO_DB_PATH` to an absolute SQLite file path before starting the API or
 The default is `data/fragbro.db`. Startup loads missing seed records without duplicating existing ones. It does not migrate schemas or validate an existing database. Keep a backup before changing personal data directly.
 
 On an ephemeral host, local changes disappear when its disk is replaced and startup restores the bundled seeds. Personal records need a persistent disk and the database path pointed at it. The public demo should expose only data you intend to share.
+
+After changing the public seed records, run `python scripts/build_demo_snapshot.py` from the repository root and commit the updated `frontend/src/demo.json`. Local frontend development still reads the running API; production builds use the committed snapshot.
 
 Backend start command: `uvicorn fragbro.api:app --host 0.0.0.0 --port "$PORT"` on a host that supplies `PORT`. The frontend is built separately with `VITE_API_URL` pointing at that backend. After deployment, `/openapi.json` should list only GET operations, with no `/wear` route.
 

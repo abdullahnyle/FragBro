@@ -1,3 +1,10 @@
+:root {
+  --accent: #b2a3d3;
+  --accent-hover: #c6b9e2;
+  --accent-border: #443a58;
+  --accent-soft: #1b1821;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -20,7 +27,7 @@ body {
 .section-label,
 .catalog-label,
 .project-summary span {
-  color: #8f909a;
+  color: var(--accent);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -32,6 +39,7 @@ body {
   line-height: 1;
   letter-spacing: -0.04em;
   text-align: left;
+  color: var(--accent);
 }
 
 .hero-copy {
@@ -58,7 +66,7 @@ body {
 
 .project-links a {
   padding: 7px 11px;
-  border: 1px solid #343640;
+  border: 1px solid var(--accent-border);
   border-radius: 8px;
   color: #e8e8ec;
   font-size: 13px;
@@ -66,8 +74,9 @@ body {
 }
 
 .project-links a:hover {
-  border-color: #555762;
-  background: #1c1d23;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
 }
 
 .project-summary {
@@ -152,7 +161,7 @@ body {
   overflow-wrap: anywhere;
   font-size: 1.35rem;
   font-weight: 600;
-  color: #e8e8e8;
+  color: var(--accent);
 }
 
 .stat-label {
@@ -210,7 +219,7 @@ body {
 }
 
 .frag-card:hover {
-  border-color: #45464f;
+  border-color: var(--accent-border);
   transform: translateY(-2px);
 }
 

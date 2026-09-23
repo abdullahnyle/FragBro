@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react'
 import FragranceCard from './FragranceCard'
 import Stats from './Stats'
 import { API_URL } from './config'
+import demo from './demo.json'
 import './App.css'
 
 function App() {
-  const [fragrances, setFragrances] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [fragrances, setFragrances] = useState(import.meta.env.PROD ? demo.fragrances : [])
+  const [loading, setLoading] = useState(!import.meta.env.PROD)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    if (import.meta.env.PROD) return
+
     fetch(`${API_URL}/fragrances`)
       .then(res => {
         if (!res.ok) throw new Error(`API returned ${res.status}`)

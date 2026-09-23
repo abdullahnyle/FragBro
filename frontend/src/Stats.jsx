@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
 import { API_URL } from './config'
+import demo from './demo.json'
+
 function Stats() {
-  const [stats, setStats] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState(import.meta.env.PROD ? demo.stats : null)
+  const [loading, setLoading] = useState(!import.meta.env.PROD)
   const [error, setError] = useState(null)
+  const [openedAt] = useState(() => Date.now())
   useEffect(() => {
+    if (import.meta.env.PROD) return
+
     fetch(`${API_URL}/wear-stats`)
       .then(res => {
         if (!res.ok) throw new Error(`API returned ${res.status}`)
@@ -21,8 +26,14 @@ function Stats() {
   }, [])
   if (loading) return <p>Loading stats...</p>
   if (error) return <p>Error loading stats: {error}</p>
+  const daysSinceLastWorn = stats.days_since_last_worn.map(f => ({
+    ...f,
+    days_ago: Math.max(0, Math.floor(
+      (openedAt - Date.parse(`${f.last_worn}T00:00:00Z`)) / 86400000
+    )),
+  }))
   const topWorn = stats.most_worn_all_time[0]
-  const mostNeglected = [...stats.days_since_last_worn]
+  const mostNeglected = [...daysSinceLastWorn]
     .sort((a, b) => b.days_ago - a.days_ago)[0]
   return (
     <div className="stats-panel">
@@ -61,7 +72,7 @@ function Stats() {
           <h3>Days since last logged wear</h3>
           {stats.days_since_last_worn.length === 0 && <p>No dated wear history yet.</p>}
           <ol>
-            {[...stats.days_since_last_worn]
+            {[...daysSinceLastWorn]
               .sort((a, b) => b.days_ago - a.days_ago)
               .map(f => (
                 <li key={`${f.brand}-${f.name}`}>

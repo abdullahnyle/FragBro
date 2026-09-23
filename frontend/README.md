@@ -11,6 +11,6 @@ npm ci
 npm run dev
 ```
 
-The API defaults to `http://127.0.0.1:8000`. Set `VITE_API_URL` before building to use another host. This value is public in the browser bundle.
+Local development reads the API at `http://127.0.0.1:8000` by default; `VITE_API_URL` can point it to another host. Production builds bundle `src/demo.json` instead of requesting the sleeping backend. Regenerate that file from the repository root with `python scripts/build_demo_snapshot.py` after changing the seed records. The API docs link still opens the backend directly.
 
 `npm run build` creates the static bundle in `dist/`. `npm run lint` checks the frontend source.

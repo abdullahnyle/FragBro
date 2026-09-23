@@ -1,0 +1,151 @@
+{
+  "fragrances": [
+    {
+      "id": 5,
+      "name": "Kaaf",
+      "brand": "Ahmed Al Maghribi",
+      "release_year": null,
+      "accords": "Fresh, clean, aromatic",
+      "dupe_of_name": "Percival",
+      "dupe_of_brand": "Parfums de Marly"
+    },
+    {
+      "id": 10,
+      "name": "Marwa",
+      "brand": "Arabiyat Prestige",
+      "release_year": null,
+      "accords": "Citrus, woody, aromatic",
+      "dupe_of_name": "Imagination",
+      "dupe_of_brand": "Louis Vuitton"
+    },
+    {
+      "id": 9,
+      "name": "Virgin Island Water",
+      "brand": "Creed",
+      "release_year": 2007,
+      "accords": "Tropical, citrus, fresh",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 6,
+      "name": "Liquid Brun",
+      "brand": "French Avenue",
+      "release_year": null,
+      "accords": "Sweet, gourmand, woody",
+      "dupe_of_name": "Althair",
+      "dupe_of_brand": "Parfums de Marly"
+    },
+    {
+      "id": 3,
+      "name": "Platinum",
+      "brand": "J. Janan",
+      "release_year": null,
+      "accords": "Clean, soapy, fresh",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 4,
+      "name": "Khamrah",
+      "brand": "Lattafa",
+      "release_year": 2022,
+      "accords": "Sweet, spicy, warm",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 8,
+      "name": "Imagination",
+      "brand": "Louis Vuitton",
+      "release_year": 2021,
+      "accords": "Citrus, woody, aromatic",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 1,
+      "name": "Althair",
+      "brand": "Parfums de Marly",
+      "release_year": 2020,
+      "accords": "Sweet, gourmand, woody",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 2,
+      "name": "Percival",
+      "brand": "Parfums de Marly",
+      "release_year": 2018,
+      "accords": "Fresh, clean, aromatic",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 7,
+      "name": "Fattan",
+      "brand": "Rasasi",
+      "release_year": null,
+      "accords": "Spicy, fresh, aromatic",
+      "dupe_of_name": null,
+      "dupe_of_brand": null
+    },
+    {
+      "id": 11,
+      "name": "Aquatica",
+      "brand": "Rayhaan",
+      "release_year": null,
+      "accords": "Tropical, citrus, fresh",
+      "dupe_of_name": "Virgin Island Water",
+      "dupe_of_brand": "Creed"
+    }
+  ],
+  "stats": {
+    "total_wears": 12,
+    "most_worn_all_time": [
+      {
+        "brand": "Rasasi",
+        "name": "Fattan",
+        "wear_count": 5
+      },
+      {
+        "brand": "Lattafa",
+        "name": "Khamrah",
+        "wear_count": 3
+      },
+      {
+        "brand": "J. Janan",
+        "name": "Platinum",
+        "wear_count": 3
+      },
+      {
+        "brand": "French Avenue",
+        "name": "Liquid Brun",
+        "wear_count": 1
+      }
+    ],
+    "owned_but_unworn": [],
+    "days_since_last_worn": [
+      {
+        "brand": "French Avenue",
+        "name": "Liquid Brun",
+        "last_worn": "2025-03-10"
+      },
+      {
+        "brand": "Lattafa",
+        "name": "Khamrah",
+        "last_worn": "2026-02-14"
+      },
+      {
+        "brand": "J. Janan",
+        "name": "Platinum",
+        "last_worn": "2026-07-06"
+      },
+      {
+        "brand": "Rasasi",
+        "name": "Fattan",
+        "last_worn": "2026-07-14"
+      }
+    ]
+  }
+}
